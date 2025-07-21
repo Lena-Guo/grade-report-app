@@ -1,0 +1,968 @@
+body {
+  background-color: #f8f5ff;
+  margin: 0;
+  font-family: 'Noto Sans TC', 'Niconne', cursive;
+  color: #333;
+}
+
+.dashboard-wrapper {
+  background-color: #f8f5ff;
+  padding: 2rem;
+  border-radius: 16px;
+}
+
+/* 結構區塊 */
+.navbar {
+  position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: #333;
+    color: white;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+  background: linear-gradient(to right, #C8B6D8, #B7CFEF);
+  justify-content: space-around;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.page {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  padding: 1rem;
+  z-index: 0;
+  display: block; /* 預設為 block，動畫只靠透明度控制 */
+}
+
+.page.active {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  z-index: 1;
+}
+
+/* 🌈 導覽列按鈕樣式 */
+.navbar button {
+  background: linear-gradient(to right, #FADADD, #F3BFC2);
+  border: 1px solid #E5AEB0;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 🌟 導覽列按鈕懸停效果 🌟 hover 動畫效果 */
+.navbar button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.navbar button:active {
+  transform: scale(0.97);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 分頁功能 */
+/* 選擇班級與月份，未來可串資料更新前三名 */
+.selector-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.selector-group label {
+  font-weight: bold;
+  color: #555;
+}
+
+.selector-group select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #F7F7F7;
+}
+
+.top-three-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 1rem;
+}
+
+/*顯示三大科的前三名，未來可動態生成*/
+.subject-card {
+  background: linear-gradient(to bottom right, #bcb2e2, #edc6cc);
+  color: white;
+  border-radius: 16px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+.subject-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.subject-card h3 {
+  margin-bottom: 0.5rem;
+  color: #444;
+}
+
+.subject-card ol {
+  padding-left: 1.2rem;
+  color: #333;
+}
+
+/*點擊後切換到成績輸入或成績單預覽頁（已串好 JS）*/
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.fancy-button {
+  background: linear-gradient(to right, #FADADD, #F3BFC2);
+  border: 1px solid #E5AEB0;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 0.5rem;
+}
+
+.fancy-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.fancy-button:active {
+  transform: scale(0.97);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+input[type="file"] {
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #F7F7F7;
+  font-size: 0.9rem;
+}
+
+.import-card {
+  background: linear-gradient(to bottom, #B7CFEF, #E0EAFB);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  margin: 2rem auto;
+  width: 90%;
+  max-width: 600px;
+}
+
+.import-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #444;
+  text-align: center;
+}
+
+.import-card label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: bold;
+  color: #555;
+}
+
+.import-card input[type="file"] {
+  margin-top: 0.3rem;
+  margin-bottom: 0.8rem;
+  padding: 0.4rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #F7F7F7;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.import-card hr {
+  border: none;
+  border-top: 1px dashed #aaa;
+  margin: 1.5rem 0;
+}
+
+.class-card {
+  background: linear-gradient(to bottom right, #9B90C2, #d2838f);
+  color: #fff;
+  border-radius: 16px;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  font-size: 1rem;
+  max-width: 460px;
+  transition: all 0.4s ease;
+  cursor: pointer; /* ✅ 變成小手游標 */
+  position: relative;
+  overflow: hidden;
+}
+
+/* ✅ 波紋亮光效果 hover 時浮現 */
+.class-card::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 80%);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 0;
+}
+
+.class-card:hover::after {
+  width: 180%;
+  height: 180%;
+  opacity: 1;
+}
+
+/* ✅ 讓內容浮在光影上層 */
+.class-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.grade-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.grade-table th,
+.grade-table td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: center;
+  background-color: #fff;
+}
+
+.grade-table th {
+  background-color: #f0f0f0;
+}
+
+.grade-table input,
+.grade-table select {
+  width: 90%;
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+}
+
+.empty-message {
+  text-align: center;
+  font-size: 1rem;
+  color: #777;
+  background-color: #F3F3F3;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.empty-message {
+  text-align: center;
+  font-size: 1rem;
+  color: #777;
+  background-color: #F9F9F9;
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 2rem auto;
+  max-width: 500px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.clear-button-area {
+  margin-bottom: 2rem; /* 保留空間避免貼住 footer */
+  position: relative; /* 確保按鈕區域不會被 footer 覆蓋 */
+  z-index: 5;
+}
+
+.fancy-button.danger {
+  background: linear-gradient(to right, #F56C6C, #F78E8E);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.fancy-button.danger:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to right, #E64949, #F16E6E);
+}
+
+.weight-card {
+  background: linear-gradient(to bottom, #EDE3FF, #F7F2FF);
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+  margin: 2rem auto;
+  max-width: 600px;
+}
+
+.weight-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.weight-table th,
+.weight-table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ccc;
+  text-align: center;
+}
+
+.weight-table input {
+  width: 60px;
+  padding: 0.3rem;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  text-align: center;
+}
+
+.weight-status {
+  margin-top: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.floating-message {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background-color: #fff;
+  border: 2px solid #777;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  font-weight: bold;
+  color: #444;
+  animation: fadeInOut 3s ease forwards;
+}
+
+.floating-message.success {
+  border-color: #44bb44;
+  color: #339933;
+}
+
+.floating-message.error {
+  border-color: #cc3333;
+  color: #cc3333;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+.update-time {
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  color: #666;
+}
+
+.report-card {
+  background: linear-gradient(to right, #FFEFB2, #FFF8D6);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 2rem auto;
+  max-width: 600px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+  font-size: 1rem;
+  color: #444;
+}
+
+.report-card h3 {
+  margin-bottom: 1rem;
+  color: #805500;
+}
+
+.report-card ul {
+  margin-top: 1rem;
+  padding-left: 1rem;
+}
+
+.dashboard-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  background-color: #f8f5ff; /* 粉白色底 */
+  padding: 2rem;
+  border-radius: 16px;
+}
+
+
+.left-panel,
+.right-panel {
+  width: 50%;
+}
+
+.top-three-container,
+#monthlySummaryContainer {
+  margin-bottom: 1.5rem;
+}
+
+.summary-heading {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  color: #333;
+}
+
+.monthly-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.monthly-table th,
+.monthly-table td {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.monthly-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.monthly-table thead {
+  background-color: #8aa4d6;
+  color: rgb(27, 22, 22);
+  font-weight: bold;
+}
+
+.summary-heading {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  color: #333;
+}
+
+.empty-month-message {
+  font-size: 0.95rem;
+  color: #666;
+  padding: 0.5rem 0;
+}
+
+.monthly-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.8rem;
+}
+
+.monthly-table th,
+.monthly-table td {
+  border: 1px solid #ccc;
+  padding: 0.4rem 0.6rem;
+  text-align: center;
+}
+
+.monthly-table thead {
+  background-color: #f4f4f4;
+}
+
+.score-bar {
+  background: #eee;
+  border-radius: 6px;
+  height: 8px;
+  margin-top: 4px;
+  width: 100%;
+  position: relative;
+}
+
+.score-bar .fill {
+  height: 12px;
+  background: linear-gradient(to right, #8aa4d6, #c7b4e3);
+  border-radius: 8px;
+  transition: width 0.5s ease;
+}
+
+.monthly-table tbody tr:hover {
+  background-color: #eaf0ff;
+  cursor: pointer;
+}
+
+.subject-card li {
+  padding: 0.3rem 0.6rem;
+  cursor: help;
+}
+
+.subject-card li:hover {
+  background-color: #f0f6ff;
+  border-radius: 6px;
+}
+
+.pretty-button {
+  font-family: 'Rubik', sans-serif;
+  background: linear-gradient(to right, #8aa4d6, #a9c7ff);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.pretty-button:hover {
+  background: linear-gradient(to right, #7c96c4, #98b8f0);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+select option:hover,
+select:hover {
+  background-color: #c7b4e3; /* 淺紫色 */
+  color: #333;
+}
+
+.class-card,
+.subject-card,
+.monthly-table {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+}
+
+.pretty-footer {
+  position: fixed;
+  bottom: 2rem;
+  left: 3rem;
+  max-width: 350px;
+  padding: 12px 16px;
+  background: linear-gradient(to right, #8aa4d6, #c7b4e3);
+  color: white;
+  font-size: 0.95rem;
+  line-height: 0.5;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  z-index: 999;
+  animation: breathe 5s ease-in-out infinite;
+  transform-origin: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  word-break: break-word;
+}
+
+    @keyframes breathe {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.95; }
+    100% { transform: scale(1); opacity: 1; }
+    }
+
+.wave-container {
+  position: relative;
+  height: 60px;
+  overflow: hidden;
+  margin-top: -20px; /* 把波紋拉到 footer 上面 */
+}
+
+.wave-container svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  animation: waveShift 8s linear infinite;
+}
+
+.wave-container path {
+  fill: url(#waveGradient);
+}
+
+/* ⛵ 波紋移動動畫 */
+@keyframes waveShift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-200px); }
+}
+
+/* 🎨 定義漸層色（要放在 SVG 上面）：你可以在 <svg> 裡加這個 defs 區塊 */
+
+.floating-clear-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: linear-gradient(to right, #8aa4d6, #c7b4e3); /* 繡球花藍紫漸層 */
+  color: white;
+  border: none;
+  border-radius: 100px;
+  padding: 0.8rem 1.4rem;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+  cursor: pointer;
+  animation: breathe 5s ease-in-out infinite;
+  transition: transform 0.2s ease;
+}
+
+.floating-clear-button:hover {
+  background: linear-gradient(to right, #7c96c4, #b8a9d8);
+  transform: scale(1.05);
+}
+
+/* 呼吸式跳動動畫 */
+@keyframes breathe {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.95; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.date-box {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0.5rem 0;
+}
+
+.pretty-select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f8f5ff;
+  font-size: 0.95rem;
+}
+
+.report-preview-area {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+  text-align: center;
+  margin-top: 2rem;
+}
+
+#reportCanvas {
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.niconne-regular {
+  font-family: "Niconne", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+#reportCanvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  max-width: 1000px; /* 可視需要調整最大寬度 */
+}
+
+#classSelect.selected-flash {
+  animation: glowHighlight 0.3s ease;
+}
+
+@keyframes glowHighlight {
+  0% { background-color: #ffeeba; }
+  100% { background-color: white; }
+}
+
+.sort-button {
+  background: linear-gradient(to right, #8aa4d6, #c7b4e3); /* 繡球花藍紫漸層 */
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.sort-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.class-card.clicked {
+  box-shadow: 0 0 12px #818ebf;
+  border-radius: 12px;
+  transition: box-shadow 0.3s ease;
+}
+
+.class-card:hover {
+  transform: translateY(-4px);
+  background: linear-gradient(to right, #8aa4d6, #c7b4e3); /* ✅ hover 時變色 */
+  box-shadow: 0 0 12px #818ebf;
+}
+
+.quarter-message {
+  background: linear-gradient(to right, #818EBF, #b4bde2);
+  color: white;
+  padding: 0.8rem 1.4rem;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: inline-block;
+  margin-top: 1rem;
+  animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#reportCanvas {
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.quarter-control {
+  margin-top: 1.6rem;
+  padding-top: 0.4rem;
+}
+
+#classCardsContainer {
+  display: grid;
+  grid-auto-rows: 200px;
+  grid-template-columns: repeat(2, 1fr); /* 一列最多4個班級卡片 */
+  grid-auto-rows: auto;
+  gap: 1.2rem;
+  margin-top: 2rem;
+  row-gap: 2rem; /* 不只左右距離，列距離也有感 */
+}
+
+@media screen and (max-width: 768px) {
+  #classCardsContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #classCardsContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+.button-box {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.subject-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.subject-modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 14px;
+  width: 440px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+}
+
+.subject-block {
+  margin-bottom: 1.6rem;
+}
+
+.subject-block label {
+  display: block;
+  margin-top: 0.4rem;
+}
+
+.weight-input {
+  width: 80px;
+  margin-left: 0.5rem;
+}
+
+.add-subject-form {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ccc;
+}
+
+.add-subject-form input {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.floating-button-group {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  gap: 1rem;
+  z-index: 999;
+  animation: fadeInUp 0.5s ease;
+
+}
+
+.floating-button {
+  background: linear-gradient(to right, #8aa4d6, #c7b4e3); /* 繡球花漸層 */
+  color: white;
+  border: none;
+  border-radius: 100px;
+  padding: 0.8rem 1.4rem;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  cursor: pointer;
+  animation: breathe 5s ease-in-out infinite;
+  transition: transform 0.2s ease;
+}
+
+.floating-button-group:hover {
+  transform: scale(1.02);
+}
+
+@media screen and (max-width: 480px) {
+  .floating-button-group {
+    flex-direction: column;
+    right: 1rem;
+    bottom: 1rem;
+  }
+}
+
+.danger-button {
+  background: linear-gradient(to right, #d74242, #bf3c6e);
+  color: white;
+  border-radius: 100px;
+}
+
+.editor-select-row {
+  display: flex;
+  gap: 1rem;
+  margin: 1.4rem 0;
+}
+
+.editor-toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: linear-gradient(to right, #81c7d4, #b6bbe6); /* 淺藍紫漸層 */
+  color: white;
+  padding: 0.8rem 1.4rem;
+  border-radius: 100px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  font-size: 1rem;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.editor-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.editor-status-bar {
+  background: linear-gradient(to right, #b8d3ec, #d8c3e8); /* 柔和藍紫漸層 */
+  color: #333;
+  padding: 0.8rem 1.2rem;
+  border-radius: 100px;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+@keyframes fadeInUpTable {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.monthly-table {
+  animation: fadeInUpTable 0.6s ease;
+}
+
+#studentScoresTableContainer {
+  transition: opacity 0.4s ease;
+}
+
+#studentScoresTableContainer.fade-out {
+  opacity: 0.2;
+}
+
+/* 每列 hover 時變色 */
+.monthly-table tbody tr:hover {
+  background-color: #eaf4ff;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+/* 選取列高亮＋邊框亮起 */
+.monthly-table tbody tr.selected-row {
+  background-color: #e9def1;
+  border-left: 5px solid #DC9FB4;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
+}
+
+/* checkbox 稍微放大＆顏色亮一點 */
+.editorItemCheck {
+  transform: scale(1.2);
+  accent-color: #a082a4;
+}
+
+.selected-count-notice {
+  font-size: 0.9rem;
+  color: #444;
+  margin-top: 0.6rem;
+  background: #eef6ff;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  display: inline-block;
+}

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>成績管理系統</title>
+  <!-- Google Fonts 繡球花字型組合 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&family=Rubik:wght@400;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Niconne&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+
+  <!-- 🌸 導覽列 -->
+  <nav class="navbar">
+    <button data-page="dashboard">首頁</button>
+    <button data-page="grade-entry">成績輸入</button>
+    <button data-page="report-preview">成績單預覽</button>
+    <button data-page="grade-editor">成績編輯</button>
+  </nav>
+
+  <!-- 🏠 首頁 -->
+  <section id="dashboard" class="page active">
+
+    <!-- 左右容器 -->
+    <div class="dashboard-layout">
+
+        <div class="left-panel" id="classCardsContainer"></div>
+
+        <div class="right-panel">
+        <div id="monthlySummaryContainer"></div>
+        <div class="top-three-container"></div>
+        </div>
+    </div>
+
+    <!-- 🏫 班級卡片顯示區塊 -->
+<div class="floating-button-group">
+  <button id="exportFullDataBtn" class="floating-button">💾 匯出json</button>
+  <button id="importFullDataBtn" class="floating-button">📂 匯入json</button>
+  <input type="file" id="importFullDataInput" accept=".json" style="display:none;">
+  <button id="clearTestDataBtn" class="floating-button">🧹 清除測試資料</button>
+</div>
+  <!-- JavaScript 會自動產生 subject-card -->
+</div>
+
+  </section>
+
+  <!-- 📝 成績輸入 -->
+  <section id="grade-entry" class="page">
+    <!-- 這裡未來會放成績表格與匯入功能 -->
+<div id="gradeTableContainer">
+</div>
+<div class="import-card">
+  <h3>匯入功能</h3>
+
+  <label for="classExcelInput">匯入班級名單：</label>
+  <input type="file" id="classExcelInput" accept=".xlsx" />
+  <button class="fancy-button" onclick="importClassList()">匯入班級名單</button>
+
+  <hr />
+
+  <label for="excelInput">匯入成績資料：</label>
+  <input type="file" id="excelInput" accept=".xlsx" />
+  <button class="fancy-button" onclick="handleExcelImport()">匯入成績</button>
+</div>
+
+<div class="weight-card">
+  <h3>📊 本學期成績權重設定</h3>
+  <table class="weight-table">
+    <thead>
+      <tr>
+        <th>科目</th>
+        <th>大考權重</th>
+        <th>平時考權重</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>聽力與口說</td>
+        <td><input type="number" min="0" max="100" value="30" /></td>
+        <td><input type="number" min="0" max="100" value="0" /></td>
+      </tr>
+      <tr>
+        <td>KK音標</td>
+        <td><input type="number" min="0" max="100" value="20" /></td>
+        <td><input type="number" min="0" max="100" value="15" /></td>
+      </tr>
+      <tr>
+        <td>閱讀</td>
+        <td><input type="number" min="0" max="100" value="20" /></td>
+        <td><input type="number" min="0" max="100" value="15" /></td>
+      </tr>
+    </tbody>
+  </table>
+  <p id="weight-total" class="weight-status">🔍 權重總和：100 / 100 ✅</p>
+</div>
+<p id="lastUpdateTime" class="update-time">尚未儲存任何成績</p>
+<div id="importReportContainer"></div>
+  </section>
+
+  <!-- 📄 成績單預覽 -->
+  <section id="report-preview" class="page">
+    <!-- 這裡未來會放成績單與匯出 PDF 按鈕 -->
+    <div class="report-preview-area">
+    <h3>📄 點擊學生可預覽成績單</h3>
+
+    <label for="monthSelect">選擇月份：</label>
+    <select id="monthSelect" class="pretty-select">
+    <option value="">請選擇月份</option>
+    </select>
+
+    <label for="classSelect">選擇班級：</label>
+    <select id="classSelect" class="pretty-select">
+    <option value="">請選擇班級</option>
+    </select>
+
+    <label for="studentSelect">選擇學生：</label>
+    <select id="studentSelect" class="pretty-select">
+    <option value="">請選擇學生</option>
+    </select>
+
+    <div class="quarter-control">
+      <label for="quarterSelect">📘 選擇學期季度：</label>
+      <select id="quarterSelect" class="pretty-select">
+        <option value="">請選擇季度</option>
+        <!-- 選項由 JS 自動生成 -->
+      </select>
+    </div>
+
+    <!-- 浮出提示欄 -->
+    <div id="quarterMessage" class="quarter-message">📘 正在統計：—</div>
+    
+    <canvas id="reportCanvas" width="1000" height="1400" style="width:100%; height:auto;"></canvas>
+    <button type="button" class="pretty-button" onclick="downloadReportImage()">下載成績單</button>
+
+    <button id="downloadWholeClassBtn" class="pretty-button">📥 下載整班成績單</button>
+
+    </div>
+  </section>
+
+  <!-- <button class="floating-clear-button" onclick="clearAllTestData()">🧹 清除所有測試資料</button> -->
+
+    <script src="js/main.js"></script>
+    <script src="js/gradeDashboard.js"></script>
+    <script src="js/gradeInput.js"></script>
+    <script src="js/reportPreview.js"></script>
+    <script src="js/gradeEditor.js"></script>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+
+    <div id="subjectModal" class="subject-modal">
+    <div class="subject-modal-content">
+      <h3 id="modalTitle">編輯科目設定</h3>
+        <div class="add-subject-form">
+          <h4>➕ 新增科目設定</h4>
+          <input id="newSubjectName" type="text" placeholder="科目名稱">
+          <input id="newSubjectType" type="text" placeholder="類型（如核心、補強）">
+          <input id="newSubjectWeight" type="number" min="0" max="100" placeholder="權重">
+          <button id="addSubjectBtn" class="pretty-button">新增</button>
+        </div>
+      <div id="subjectFormArea"></div>
+      <div class="modal-buttons">
+        <button id="saveSubjectBtn" class="pretty-button">💾 儲存設定</button>
+        <button id="closeSubjectBtn" class="pretty-button">❌ 關閉</button>
+      </div>
+    </div>
+    </div>
+    <section id="grade-editor" class="page">
+      <h2>✏️ 成績編輯中心</h2>
+      <div class="editor-select-row">
+        <div id="editorStatusBar" class="editor-status-bar"></div>
+        <select id="editorClassSelect" class="pretty-select">
+          <option disabled selected>請選擇班級</option>
+        </select>
+
+        <select id="editorStudentSelect" class="pretty-select">
+          <option disabled selected>請選擇學生</option>
+        </select>
+
+        <button id="resetStudentBtn" class="pretty-button danger-button">🗑️ 退班／清除資料</button>
+      </div>
+
+      <div id="studentScoresTableContainer"></div>
+      <div id="selectedCountNotice" class="selected-count-notice"></div>
+      <button id="bulkDeleteBtn" class="pretty-button danger-button">🗑️ 刪除選取成績</button>
+    </section>
+    <div id="editorToast" class="editor-toast">✅ 編輯完成</div>
+</body>
+<footer class="pretty-footer">
+  <p>🧁 成績登記系統設計 by Lena｜版本 1.0 © 2025</p>
+  <p>🔗 聯絡信箱：stabilo1191@gmail.com</p>
+  <div class="wave-container">
+  <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <defs>
+        <linearGradient id="waveGradient" gradientTransform="rotate(90)">
+            <stop offset="0%" stop-color="#8aa4d6" />
+            <stop offset="100%" stop-color="#c7b4e3" />
+        </linearGradient>
+        </defs>
+    <path d="M0,0 C300,100 900,0 1200,80 L1200,120 L0,120 Z"></path>
+  </svg>
+</div>
+</footer>
+</html>
